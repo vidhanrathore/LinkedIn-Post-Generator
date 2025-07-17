@@ -1,7 +1,4 @@
 from llm_helper import llm
-from few_shot import FewShotPosts
-
-few_shot = FewShotPosts()
 
 
 def get_length_str(length):
@@ -13,13 +10,13 @@ def get_length_str(length):
         return "11 to 15 lines"
 
 
-def generate_post(length, language, tag):
-    prompt = get_prompt(length, language, tag)
+def generate_post(length, language, tag, subject):
+    prompt = get_prompt(length, language, tag, subject)
     response = llm.invoke(prompt)
     return response.content
 
 
-def get_prompt(length, language, tag):
+def get_prompt(length, language, tag, subject):
     length_str = get_length_str(length)
 
     prompt = f'''
@@ -28,25 +25,13 @@ def get_prompt(length, language, tag):
     1) Topic: {tag}
     2) Length: {length_str}
     3) Language: {language}
+    4) More Context: {subject}
     If Language is Hinglish then it means it is a mix of Hindi and English. 
     The script for the generated post should always be English.
     '''
-    # prompt = prompt.format(post_topic=tag, post_length=length_str, post_language=language)
-
-    examples = few_shot.get_filtered_posts(length, language, tag)
-
-    if len(examples) > 0:
-        prompt += "4) Use the writing style as per the following examples."
-
-    for i, post in enumerate(examples):
-        post_text = post['text']
-        prompt += f'\n\n Example {i+1}: \n\n {post_text}'
-
-        if i == 1: # Use max two samples
-            break
 
     return prompt
 
 
 if __name__ == "__main__":
-    print(generate_post("Medium", "English", "Mental Health"))
+    print(generate_post("Medium", "English", "Mental Health","How yoga affect sleep cycle ?"))
