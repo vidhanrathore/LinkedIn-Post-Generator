@@ -10,4 +10,3 @@ if __name__ == "__main__":
     response = llm.invoke("Two most important ingradient in samosa are ")
     print(response.content)
 
- 
