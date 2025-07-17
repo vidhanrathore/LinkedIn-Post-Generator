@@ -14,3 +14,8 @@ This tool will help LinkedIn influencer create the new posts based on the Given 
    streamlit run main.py
    ```
 
+
+What I have learned from this project:
+1. basic streamlit revision: how to deploy streamlit project it is also very easy.
+2. basic about groq: it is very helpful in generating contant and using llm very easily.
+
