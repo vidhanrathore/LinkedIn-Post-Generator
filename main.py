@@ -1,11 +1,10 @@
 import streamlit as st
-from few_shot import FewShotPosts
 from post_generator import generate_post
 
 
 # Options for length and language
 length_options = ["Short", "Medium", "Long"]
-language_options = ["English", "Hinglish"]
+language_options = ["English", "Hinglish","Hindi"]
 
 
 # Main app layout
@@ -15,8 +14,8 @@ def main():
     # Create three columns for the dropdowns
     col1, col2, col3 = st.columns(3)
 
-    fs = FewShotPosts()
-    tags = fs.get_tags()
+    # abhi hard code kar raha hu but in future we will make it more   
+    tags = ['Mental Health', 'Time Management', 'Leadership', 'Career Advice', 'Motivation', 'Online Dating', 'Organic Growth', 'Productivity', 'Job Search', 'Self Improvement', 'Scams', 'Sapne', 'Influencer']
     with col1:
         # Dropdown for Topic (Tags)
         selected_tag = st.selectbox("Topic", options=tags)

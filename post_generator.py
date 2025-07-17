@@ -1,8 +1,4 @@
 from llm_helper import llm
-from few_shot import FewShotPosts
-
-few_shot = FewShotPosts()
-
 
 def get_length_str(length):
     if length == "Short":
@@ -31,22 +27,9 @@ def get_prompt(length, language, tag):
     If Language is Hinglish then it means it is a mix of Hindi and English. 
     The script for the generated post should always be English.
     '''
-    # prompt = prompt.format(post_topic=tag, post_length=length_str, post_language=language)
-
-    examples = few_shot.get_filtered_posts(length, language, tag)
-
-    if len(examples) > 0:
-        prompt += "4) Use the writing style as per the following examples."
-
-    for i, post in enumerate(examples):
-        post_text = post['text']
-        prompt += f'\n\n Example {i+1}: \n\n {post_text}'
-
-        if i == 1: # Use max two samples
-            break
-
     return prompt
 
 
 if __name__ == "__main__":
+    # print(get_prompt("Medium", "English", "Mental Health"))
     print(generate_post("Medium", "English", "Mental Health"))
