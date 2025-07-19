@@ -13,40 +13,34 @@ def get_length_str(length):
         return "11 to 15 lines"
 
 
-def generate_post(length, language, tag):
-    prompt = get_prompt(length, language, tag)
+def generate_post(length, language, tag, subject, post_style):
+    prompt = get_prompt(length, language, tag, subject, post_style)
     response = llm.invoke(prompt)
     return response.content
 
 
-def get_prompt(length, language, tag):
+def get_prompt(length, language, tag, subject, post_style=''):
     length_str = get_length_str(length)
-
+    post_style_part = ''
+    if post_style.strip():
+        post_style_part = f'''5) Use the writing style as per the following example.
+    Example: {post_style}'''
+    
     prompt = f'''
     Generate a LinkedIn post using the below information. No preamble.
 
     1) Topic: {tag}
     2) Length: {length_str}
     3) Language: {language}
+    4) More Context: {subject}
+    {post_style_part}
     If Language is Hinglish then it means it is a mix of Hindi and English. 
     The script for the generated post should always be English.
     '''
-    # prompt = prompt.format(post_topic=tag, post_length=length_str, post_language=language)
-
-    examples = few_shot.get_filtered_posts(length, language, tag)
-
-    if len(examples) > 0:
-        prompt += "4) Use the writing style as per the following examples."
-
-    for i, post in enumerate(examples):
-        post_text = post['text']
-        prompt += f'\n\n Example {i+1}: \n\n {post_text}'
-
-        if i == 1: # Use max two samples
-            break
-
     return prompt
 
 
 if __name__ == "__main__":
-    print(generate_post("Medium", "English", "Mental Health"))
+    # print(generate_post("Medium", "English", "Mental Health"))
+    print(get_prompt("Short", "English","marketing","how to sell","  "))
+    

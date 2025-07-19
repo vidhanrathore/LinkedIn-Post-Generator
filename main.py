@@ -5,18 +5,19 @@ from post_generator import generate_post
 
 # Options for length and language
 length_options = ["Short", "Medium", "Long"]
-language_options = ["English", "Hinglish"]
+language_options = ["English", "Hinglish", "Hindi"]
 
 
 # Main app layout
 def main():
-    st.subheader("LinkedIn Post Generator: Vidhan Rathore")
+    st.subheader("LinkedIn Post Generator By Vidhan Rathore")
 
     # Create three columns for the dropdowns
     col1, col2, col3 = st.columns(3)
 
-    fs = FewShotPosts()
-    tags = fs.get_tags()
+    tags = ['Sapne', 'Productivity', 'Motivation', 'Self Improvement', 'Organic Growth', 'Online Dating', 'Career Advice', 'Job Search', 'Mental Health', 'Time Management', 'Scams', 'Leadership', 'Influencer']
+    subject = st.text_input("Subject", placeholder="Enter about your post to make it more customize.", icon="🚨")
+    post_style = st.text_input("Post Style", placeholder="Enter your post as example to copy writing style.")
     with col1:
         # Dropdown for Topic (Tags)
         selected_tag = st.selectbox("Topic", options=tags)
@@ -33,7 +34,7 @@ def main():
 
     # Generate Button
     if st.button("Generate"):
-        post = generate_post(selected_length, selected_language, selected_tag)
+        post = generate_post(selected_length, selected_language, selected_tag, subject, post_style)
         st.write(post)
 
 
