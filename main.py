@@ -15,8 +15,8 @@ def main():
     col1, col2, col3 = st.columns(3)
 
     tags = ['Sapne', 'Productivity', 'Motivation', 'Self Improvement', 'Organic Growth', 'Online Dating', 'Career Advice', 'Job Search', 'Mental Health', 'Time Management', 'Scams', 'Leadership', 'Influencer']
-    subject = st.text_input("Subject", placeholder="Enter about your post to make it more customize.", icon="🚨")
-    post_style = st.text_input("Post Style", placeholder="Enter your post as example to copy writing style.")
+    subject = st.text_input("Subject", placeholder="Enter about your post to make it more customize.", icon="💡")
+    post_style = st.text_input("Post Style", placeholder="Enter your post as example to copy writing style.", icon="✍️")
     with col1:
         # Dropdown for Topic (Tags)
         selected_tag = st.selectbox("Topic", options=tags)
