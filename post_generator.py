@@ -13,6 +13,7 @@ def get_length_str(length):
 def generate_post(length, language, tag, subject, post_style):
     prompt = get_prompt(length, language, tag, subject, post_style)
     response = llm.invoke(prompt)
+    # print(response)
     return response.content
 
 
@@ -38,6 +39,6 @@ def get_prompt(length, language, tag, subject, post_style=''):
 
 
 if __name__ == "__main__":
-    # print(generate_post("Medium", "English", "Mental Health"))
-    print(get_prompt("Short", "English","marketing","how to sell","  "))
+    print(generate_post("Medium", "English", "Mental Health", "how to sell"))
+    # print(get_prompt("Short", "English","marketing","how to sell","  "))
     
