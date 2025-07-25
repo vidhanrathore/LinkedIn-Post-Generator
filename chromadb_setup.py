@@ -111,6 +111,7 @@ def query_similar_posts_by_text(text_query: str, top_k: int = 5, metadata_filter
         return []
 
 
+
 def generate_post_id(subject, post_style, tag, length, language, generated_post=None):
     base_string = f"{subject}|{post_style}|{tag}|{length}|{language}"
     # If post text is provided, include it to avoid duplicate ID with different content
@@ -135,19 +136,48 @@ def delete_all_posts(key="123"):
             logger.warning("You Don't have right to delete the post.")
     except Exception as e:
         logger.error(f"❌ Failed to delete posts: {e}")
+        
+        
+def get_all_posts():
+    """
+    Fetch all posts from the collection.
+    """
+    try: 
+        results = collection.get(include=["documents", "metadatas"])
+        posts = [
+            {
+                "id": id_,
+                "content": doc,
+                "metadata": meta
+            }
+            for id_, doc, meta in zip(results["ids"], results["documents"], results["metadatas"])
+        ]
+        logger.info(f"Post found: {posts}")
+        
+        return posts
+    except ChromaError as e:
+        logger.error(f"ChromaDB Get method failed: {e}")
+        return None
+
+    except Exception as e:
+        logger.exception(f"Unexpected error during Get all Post: {e}")
+        return None
 
 if __name__ == "__main__":
-    sample_post = """🌱 Organic Growth: The Path to Sustainable Success
-    In today's fast-paced world, organic growth isn't just a buzzword; it's a necessity. Unlike quick fixes, it focuses on long-term strategies that build a strong foundation. Whether it's scaling your business, enhancing your skills, or fostering relationships, organic growth ensures stability and resilience. It’s about nurturing what you have and letting it flourish naturally. Embrace the journey, and remember, patience and consistent effort are key. What organic growth strategies have you implemented that have led to sustainable success? Share your experiences below! 🌟 #OrganicGrowth #SustainableSuccess #LongTermStrategies #ConsistentEffort"""
+    get_all_posts()
+    
+    # sample_post = """🌱 Organic Growth: The Path to Sustainable Success
+    # In today's fast-paced world, organic growth isn't just a buzzword; it's a necessity. Unlike quick fixes, it focuses on long-term strategies that build a strong foundation. Whether it's scaling your business, enhancing your skills, or fostering relationships, organic growth ensures stability and resilience. It’s about nurturing what you have and letting it flourish naturally. Embrace the journey, and remember, patience and consistent effort are key. What organic growth strategies have you implemented that have led to sustainable success? Share your experiences below! 🌟 #OrganicGrowth #SustainableSuccess #LongTermStrategies #ConsistentEffort"""
 
-    save_post_to_chroma(
-        generated_post=sample_post,
-        tag="growth",
-        length="short",
-        language="english",
-        subject="",
-        post_style=""
-    )
-    result = query_similar_posts_by_text("Organic Growth")
-    print(result)
+    # save_post_to_chroma(
+    #     generated_post=sample_post,
+    #     tag="growth",
+    #     length="short",
+    #     language="english",
+    #     subject="",
+    #     post_style=""
+    # )
+    # result = query_similar_posts_by_text("Organic Growth")
+    # print(result)
     # delete_all_posts("123123")
+    

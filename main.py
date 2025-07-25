@@ -1,6 +1,10 @@
 import streamlit as st
 from post_generator import generate_post
-from chromadb_setup import save_post_to_chroma 
+from chromadb_setup import save_post_to_chroma, get_all_posts
+import json
+import pandas as pd
+import io
+
 
 # Options for length and language
 length_options = ["Short", "Medium", "Long"]
@@ -25,7 +29,7 @@ def main():
             'Time Management', 'Scams', 'Leadership', 'Influencer']
 
     subject = st.text_input("Subject", placeholder="Enter about your post to make it more customize.", help="💡 What is your post about?",  icon="💡")
-    post_style = st.text_area("Post Style", placeholder="Enter your post as example to copy writing style.", help="✍️ Enter a sample post or style.", icon="✍️")
+    post_style = st.text_area("Post Style", placeholder="Enter your post as example to copy writing style.", help="✍️ Enter a sample post or style.")
 
     with col1:
         selected_tag = st.selectbox("Topic", options=tags)
@@ -82,6 +86,80 @@ def main():
                 if st.button("👎 No"):
                     st.info("Thanks for your feedback! We'll work on improving it.")
                     st.session_state.feedback_given = True
+                    
+                    
+    if st.button("📂 Show Previously Liked Posts"):
+        try:
+            with st.spinner("Loading your liked posts..."):
+                
+                liked_posts = get_all_posts()
+                
+                if not liked_posts:
+                    st.info("No liked posts found.")
+                else:
+                    st.markdown("## ❤️ Your Liked Posts")
+                    for idx, post in enumerate(liked_posts, start=1):
+                        with st.expander(f"Post #{idx}"):
+                            st.write(post)
+                            
+                    st.markdown("---")
+                    st.subheader("⬇️ Download Your Liked Posts")
+                    
+                    download1, download2, download3 = st.columns(3)
+
+                    # 🔹 Prepare TXT data
+                    txt_data = ""
+                    for idx, post in enumerate(liked_posts, start=1):
+                        txt_data += f"Post #{idx}\n"
+                        txt_data += post["content"] + "\n"
+                        txt_data += f"Tags: {post['metadata']}\n"
+                        txt_data += "-" * 60 + "\n"
+
+                    with download1:
+                        st.download_button(
+                            label="📄 Download as TXT",
+                            data=txt_data,
+                            file_name="liked_posts.txt",
+                            mime="text/plain"
+                        )
+
+                    with download2:
+                        # 🔹 Prepare JSON data
+                        json_data = json.dumps(liked_posts, indent=2, ensure_ascii=False)
+                        st.download_button(
+                            label="🧾 Download as JSON",
+                            data=json_data,
+                            file_name="liked_posts.json",
+                            mime="application/json"
+                        )
+
+                    # 🔹 Prepare CSV data
+                    flat_data = []
+                    for post in liked_posts:
+                        flat_row = {
+                            "id": post.get("id", ""),
+                            "content": post.get("content", ""),
+                            "subject": post["metadata"].get("subject", ""),
+                            "tag": post["metadata"].get("tag", ""),
+                            "length": post["metadata"].get("length", ""),
+                            "language": post["metadata"].get("language", ""),
+                            "post_style": post["metadata"].get("post_style", "")
+                        }
+                        flat_data.append(flat_row)
+
+                    df = pd.DataFrame(flat_data)
+                    csv_buffer = io.StringIO()
+                    df.to_csv(csv_buffer, index=False)
+
+                    with download3:
+                        st.download_button(
+                            label="📊 Download as CSV",
+                            data=csv_buffer.getvalue(),
+                            file_name="liked_posts.csv",
+                            mime="text/csv"
+                        )
+        except Exception as e:
+            st.error(f"⚠️ Failed to load liked posts: {e}")
 
 # Run the app
 if __name__ == "__main__":
