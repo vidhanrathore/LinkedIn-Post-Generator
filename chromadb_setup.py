@@ -110,6 +110,59 @@ def query_similar_posts_by_text(text_query: str, top_k: int = 5, metadata_filter
         logger.error(f"ChromaDB Query Error: {e}")
         return []
 
+# def semantic_search_posts(query: str = "", tags: list = [], limit: int = 5):
+#     filters = {}
+#     if tags:
+#         filters["tag"] = {"$in": tags}
+
+#     results = collection.query(
+#         query_texts=[query] if query else [""],
+#         n_results=limit
+#     )
+    
+#     print(limit)
+#     posts = []
+#     for doc, meta, id_ in zip(results['documents'], results['metadatas'], results['ids']):
+#         posts.append({
+#             "id": id_,
+#             "content": doc[0],
+#             "metadata": meta[0]
+#         })
+#     print(posts)
+#     return posts
+
+def semantic_search_posts(query: str = "", tags: list = [], limit: int = 5):
+    filters = {}
+    if tags:
+        filters["tag"] = {"$in": tags}
+
+    results = collection.query(
+        query_texts=[query] if query else [""],
+        n_results=limit,
+        where=filters if filters else None
+    )
+    
+    print("Documents:", results['documents'])         # Should be a list of strings
+    print("Metadatas:", results['metadatas'])         # Should be list of dicts or list of list of dicts
+    print("IDs:", results['ids'])  
+
+    print("Documents:",len( results['documents'][0]))         # Should be a list of strings
+    print("Metadatas:", len(results['metadatas'][0]))         # Should be list of dicts or list of list of dicts
+    print("IDs:", len(results['ids'][0]))  
+    posts = []
+    for doc, meta, id_ in zip(results['documents'][0], results['metadatas'][0], results['ids'][0]):
+        # Use doc and meta directly if they are not lists
+        content = doc[0] if isinstance(doc, list) else doc
+        metadata = meta[0] if isinstance(meta, list) else meta
+
+        posts.append({
+            "id": id_,
+            "content": content,
+            "metadata": metadata
+        })
+
+    return posts
+
 
 
 def generate_post_id(subject, post_style, tag, length, language, generated_post=None):
@@ -164,7 +217,8 @@ def get_all_posts():
         return None
 
 if __name__ == "__main__":
-    get_all_posts()
+    semantic_search_posts("How to")
+    # get_all_posts()
     
     # sample_post = """🌱 Organic Growth: The Path to Sustainable Success
     # In today's fast-paced world, organic growth isn't just a buzzword; it's a necessity. Unlike quick fixes, it focuses on long-term strategies that build a strong foundation. Whether it's scaling your business, enhancing your skills, or fostering relationships, organic growth ensures stability and resilience. It’s about nurturing what you have and letting it flourish naturally. Embrace the journey, and remember, patience and consistent effort are key. What organic growth strategies have you implemented that have led to sustainable success? Share your experiences below! 🌟 #OrganicGrowth #SustainableSuccess #LongTermStrategies #ConsistentEffort"""
