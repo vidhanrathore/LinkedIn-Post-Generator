@@ -142,13 +142,13 @@ def semantic_search_posts(query: str = "", tags: list = [], limit: int = 5):
         where=filters if filters else None
     )
     
-    print("Documents:", results['documents'])         # Should be a list of strings
-    print("Metadatas:", results['metadatas'])         # Should be list of dicts or list of list of dicts
-    print("IDs:", results['ids'])  
+    # print("Documents:", results['documents'])         # Should be a list of strings
+    # print("Metadatas:", results['metadatas'])         # Should be list of dicts or list of list of dicts
+    # print("IDs:", results['ids'])  
 
-    print("Documents:",len( results['documents'][0]))         # Should be a list of strings
-    print("Metadatas:", len(results['metadatas'][0]))         # Should be list of dicts or list of list of dicts
-    print("IDs:", len(results['ids'][0]))  
+    # print("Documents:",len( results['documents'][0]))         # Should be a list of strings
+    # print("Metadatas:", len(results['metadatas'][0]))         # Should be list of dicts or list of list of dicts
+    # print("IDs:", len(results['ids'][0]))  
     posts = []
     for doc, meta, id_ in zip(results['documents'][0], results['metadatas'][0], results['ids'][0]):
         # Use doc and meta directly if they are not lists
